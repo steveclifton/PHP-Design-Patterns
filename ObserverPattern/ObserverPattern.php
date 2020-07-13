@@ -42,7 +42,7 @@ final class WeatherStation implements Observable {
 
 	public function notify() {
 		foreach ($this->observers as $observer) {
-			$observer->update();
+			$observer->update($this);
 		}
 	}
 
@@ -68,7 +68,7 @@ final class WeatherStation implements Observable {
 
 interface Observer {
 	/* Used to tell the observer an update is available */
-	public function update();
+	public function update(WeatherStation $ws);
 }
 interface Display {
 	/* Used to display some data */
@@ -78,11 +78,10 @@ final class DisplayTelevision implements Observer, Display {
 
 	protected Observable $observable;
 
-	public function __construct(WeatherStation $ob) {
-		$this->observable = $ob;
-	}
+	public function update(WeatherStation $ws) {
+		// Set the observable to the one passed
+		$this->observable = $ws;
 
-	public function update() {
 		// Do some things, then call display
 		$this->display();
 	}
@@ -97,13 +96,12 @@ final class DisplayComputer implements Observer, Display {
 
 	protected Observable $observable;
 
-	public function __construct(WeatherStation $ob) {
-		$this->observable = $ob;
-	}
+	public function update(WeatherStation $ws) {
+		// Set the observable to the one passed
+		$this->observable = $ws;
 
-	public function update() {
-		// Do some other things, then call display
-		return $this->display();
+		// Do some things, then call display
+		$this->display();
 	}
 
 	public function display() {
