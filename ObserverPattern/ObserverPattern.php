@@ -2,7 +2,9 @@
 /**
  * Onserver Pattern
  * One to many dependancy between objects, when the observable changes state, all of its dependants are notified
- *    and they can choose which updates they want to receive
+ *    and they can choose which updates they want to receive.
+ *
+ * Chosen to pass a WeatherStation instance to the observers to allow THEM to choose which data they wish to pull
  *
  * Example : chatroom
  *  - chatroom is the observable, users are the observers
@@ -56,11 +58,18 @@ final class WeatherStation implements Observable {
 
 	/* Dummy method to randomly generate temp and notify observers */
 	public function processTemperature() {
-		$this->temperature = (float) rand(5, 50) * 1.0;
-		$this->humidity = (float) rand(80, 99) * 1.0;
+		$this->setTemperature((float) rand(5, 50) * 1.0);
+		$this->setHumidity((float) rand(80, 99) * 1.0);
 		$this->notify();
 	}
 
+	protected function setTemperature(float $temperature) {
+		$this->temperature = $temperature;
+	}
+
+	protected function setHumidity(float $humidity) {
+		$this->humidity = $humidity;
+	}
 }
 
 
@@ -120,12 +129,12 @@ final class DisplayComputer implements Observer, Display {
 $weatherStation = new WeatherStation();
 
 // Create television in the kitchen as the display
-$televisionKitchen = new DisplayTelevision($weatherStation);
+$televisionKitchen = new DisplayTelevision();
 // Add the tv kitchen as an observer of the weather station
 $weatherStation->registerObserver($televisionKitchen);
 
 // Create computer in the living room as the display
-$computerLivingroom = new DisplayComputer($weatherStation);
+$computerLivingroom = new DisplayComputer();
 // Add the computer livingroom as an observer of the weather station
 $weatherStation->registerObserver($computerLivingroom);
 
